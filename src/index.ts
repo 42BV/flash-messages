@@ -8,3 +8,4 @@ export {
 } from './models';
 export { useFlashMessages } from './hooks';
 export { FlashMessagesProvider, FlashMessagesContext} from './provider';
+export { flashMessageService } from './service';
