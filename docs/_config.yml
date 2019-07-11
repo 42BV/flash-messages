@@ -1,4 +1,6 @@
-theme: jekyll-theme-tactile
-title: ['@42.nl/react-flash-messages']
-description: [Storing flash messages via a nice api for use with React.]
-show_downloads: false
+remote_theme: 42bv/fortytwo
+title: 'react-flash-messages'
+description: 'Storing flash messages via a nice API'
+baseurl: /react-flash-messages/
+plugins:
+  - jekyll-remote-theme
