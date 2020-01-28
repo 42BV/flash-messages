@@ -12,5 +12,7 @@ module.exports = {
     indent: 'off',
     '@typescript-eslint/indent': ['error', 2],
     '@typescript-eslint/no-use-before-define': ['off', 0],
+    '@typescript-eslint/no-explicit-any': ['off', 0],
+    '@typescript-eslint/explicit-function-return-type': ['off', 0]
   },
 };

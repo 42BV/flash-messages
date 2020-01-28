@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup, wait, act } from '@testing-library/react';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 import { useFlashMessages } from '../src/hooks';
 import { addInfo } from '../src/actions';

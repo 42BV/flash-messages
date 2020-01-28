@@ -5,7 +5,9 @@ import { FlashMessage, FlashMessageConfig, FlashMessageCreatorConfig } from './m
 let nextFlashMessageId = 1;
 
 // This function does not do anything.
-const noop: VoidFunction = (): void => {};
+const noop: VoidFunction = () => {
+  return undefined;
+};
 
 /**
  * Adds a FlashMessage to the store and removes it after the
@@ -43,7 +45,7 @@ export function addError<Data>({ text, onClick, data }: FlashMessageCreatorConfi
 }
 
 /**
- * Adds a flash message of the type 'WARNING' on the flash message queue. 
+ * Adds a flash message of the type 'WARNING' on the flash message queue.
  * After 7000 milliseconds it will automatically be removed
  * from the queue.
  *
@@ -54,7 +56,7 @@ export function addWarning<Data>({ text, onClick, data }: FlashMessageCreatorCon
 }
 
 /**
- * Adds a flash message of the type 'SUCCESS' on the flash message queue. 
+ * Adds a flash message of the type 'SUCCESS' on the flash message queue.
  * After 2000 milliseconds it will automatically be removed
  * from the queue.
  *
@@ -65,7 +67,7 @@ export function addSuccess<Data>({ text, onClick, data }: FlashMessageCreatorCon
 }
 
 /**
- * Adds a flash message of the type 'INFO' on the flash message queue. 
+ * Adds a flash message of the type 'INFO' on the flash message queue.
  * After 5000 milliseconds it will automatically be removed
  * from the queue.
  *
@@ -76,7 +78,7 @@ export function addInfo<Data>({ text, onClick, data }: FlashMessageCreatorConfig
 }
 
 /**
- * Adds a flash message of the type 'APOCALYPSE' on the flash message queue. 
+ * Adds a flash message of the type 'APOCALYPSE' on the flash message queue.
  * This message is never removed from the queue automatically.
  *
  * @param {FlashMessageCreatorConfig} { text, onClick, data }
@@ -90,7 +92,7 @@ function addIdAndOnClick<Data>(flashMessage: FlashMessageConfig<Data>): FlashMes
 
   // By adding the onClick it is no longer optional, TypeScript
   // does not recognize this so the cast forces it to.
-  let f = flashMessage as FlashMessage<Data>;
+  const f = flashMessage as FlashMessage<Data>;
 
   // Assign a unique id to the flash message;
   f.id = nextFlashMessageId;
