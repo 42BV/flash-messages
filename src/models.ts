@@ -1,6 +1,6 @@
 export type OnFlashMessageClicked<Data> = (msg: FlashMessage<Data>) => void;
 
-export interface FlashMessage<Data> {
+export type FlashMessage<Data> = {
   // The id of the flashMessage must be unique for each flash message.
   id: number;
 
@@ -27,9 +27,9 @@ export interface FlashMessage<Data> {
     be used / manipulated now and in the future.
   */
   data?: Data;
-}
+};
 
-export interface FlashMessageConfig<Data> {
+export type FlashMessageConfig<Data> = {
   /*
     The type of flash message, can be useful to distinguish
     between types of messages. For example you might have a type
@@ -55,9 +55,9 @@ export interface FlashMessageConfig<Data> {
     be used / manipulated now and in the future.
   */
   data?: Data;
-}
+};
 
-export interface FlashMessageCreatorConfig<Data> {
+export type FlashMessageCreatorConfig<Data> = {
   // The text message you want to show to the user.
   text: string;
 
@@ -73,4 +73,4 @@ export interface FlashMessageCreatorConfig<Data> {
     be used / manipulated now and in the future.
   */
   data?: Data;
-}
+};

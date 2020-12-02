@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, wait, act, fireEvent } from '@testing-library/react';
+import { render, cleanup, waitFor, act, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import { useFlashMessages } from '../src/hooks';
@@ -25,9 +25,11 @@ describe('Scenario', () => {
   }
 
   test('a basic complete scenario which shows flash messages which remove when clicked', async () => {
+    expect.assertions(2);
+    
     const { getByTestId, queryByTestId } = render(<Component />);
 
-    const onClick = (flashMessage: FlashMessage<any>) => {
+    const onClick = (flashMessage: FlashMessage<unknown>) => {
       flashMessageService.removeFlashMessage(flashMessage);
     };
 
@@ -35,13 +37,13 @@ describe('Scenario', () => {
       addInfo({ text: 'info', onClick });
     });
 
-    await wait(() => {
+    await waitFor(() => {
       expect(getByTestId('message')).toHaveTextContent('info');
     });
 
     fireEvent.click(getByTestId('message'));
 
-    await wait(() => {
+    await waitFor(() => {
       expect(queryByTestId('message')).toBe(null);
     });
   });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, wait, act } from '@testing-library/react';
+import { render, cleanup, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import { useFlashMessages } from '../src/hooks';
@@ -20,6 +20,8 @@ describe('useFlashMessages', () => {
   }
 
   test('that flashMessages are provided', async () => {
+    expect.assertions(2);
+
     jest.spyOn(flashMessageService, 'unsubscribe');
 
     const { getByTestId } = render(<Component />);
@@ -28,7 +30,7 @@ describe('useFlashMessages', () => {
       addInfo({ text: 'info' });
     });
     
-    await wait(() => {
+    await waitFor(() => {
       expect(getByTestId('message')).toHaveTextContent('info');
     });
 

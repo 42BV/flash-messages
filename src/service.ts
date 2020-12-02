@@ -1,18 +1,18 @@
 import { FlashMessage } from './models';
 
-export type Subscriber = (flashMessages: FlashMessage<any>[]) => void;
+export type Subscriber = (flashMessages: FlashMessage<unknown>[]) => void;
 
-export interface FlashMessageService {
-  addFlashMessage(flashMessage: FlashMessage<any>): void;
-  removeFlashMessage(flashMessage: FlashMessage<any>): void;
+export type FlashMessageService = {
+  addFlashMessage(flashMessage: FlashMessage<unknown>): void;
+  removeFlashMessage(flashMessage: FlashMessage<unknown>): void;
   clearFlashMessages(): void;
   subscribe(subscriber: Subscriber): void;
   unsubscribe(subscriber: Subscriber): void;
-  getFlashMessages: () => FlashMessage<any>[];
-}
+  getFlashMessages: () => FlashMessage<unknown>[];
+};
 
 export function makeFlashMessageService(): FlashMessageService {
-  let flashMessages: FlashMessage<any>[] = [];
+  let flashMessages: FlashMessage<unknown>[] = [];
 
   let subscribers: Subscriber[] = [];
 
@@ -22,17 +22,17 @@ export function makeFlashMessageService(): FlashMessageService {
     clearFlashMessages,
     getFlashMessages,
     subscribe,
-    unsubscribe,
+    unsubscribe
   };
 
-  function addFlashMessage(flashMessage: FlashMessage<any>) {
+  function addFlashMessage(flashMessage: FlashMessage<unknown>) {
     flashMessages.push(flashMessage);
 
     informSubscribers();
   }
 
-  function removeFlashMessage(flashMessage: FlashMessage<any>) {
-    flashMessages = flashMessages.filter(f => f !== flashMessage);
+  function removeFlashMessage(flashMessage: FlashMessage<unknown>) {
+    flashMessages = flashMessages.filter((f) => f !== flashMessage);
 
     informSubscribers();
   }
@@ -54,11 +54,11 @@ export function makeFlashMessageService(): FlashMessageService {
   }
 
   function unsubscribe(subscriber: Subscriber): void {
-    subscribers = subscribers.filter(s => s !== subscriber);
+    subscribers = subscribers.filter((s) => s !== subscriber);
   }
 
   function informSubscribers() {
-    subscribers.forEach(subscriber => subscriber([...flashMessages]));
+    subscribers.forEach((subscriber) => subscriber([...flashMessages]));
   }
 }
 

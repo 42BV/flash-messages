@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, wait, act } from '@testing-library/react';
+import { render, cleanup, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import { FlashMessagesProvider, FlashMessagesContext } from '../src/provider';
@@ -9,7 +9,7 @@ import { addInfo } from '../src/actions';
 function Component() {
   return (
     <FlashMessagesContext.Consumer>
-      {(flashMessages: FlashMessage<any>[]) => {
+      {(flashMessages: FlashMessage<unknown>[]) => {
         return (
           <ul>
             {flashMessages.map(flashMessage => (
@@ -28,6 +28,8 @@ afterEach(cleanup);
 
 describe('FlashMessagesProvider', () => {
   test('that flashMessages are provided', async () => {
+    expect.assertions(1);
+
     const { getByTestId } = render(
       <FlashMessagesProvider>
         <Component />
@@ -38,7 +40,7 @@ describe('FlashMessagesProvider', () => {
       addInfo({ text: 'info' });
     });
 
-    await wait(() => {
+    await waitFor(() => {
       expect(getByTestId('message')).toHaveTextContent('info');
     });
   });

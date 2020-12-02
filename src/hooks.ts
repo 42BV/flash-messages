@@ -6,11 +6,13 @@ import { FlashMessage } from './models';
 /**
  * Returns the flashMessages.
  */
-export function useFlashMessages(): FlashMessage<any>[] {
-  const [state, setState] = useState<FlashMessage<any>[]>(flashMessageService.getFlashMessages());
+export function useFlashMessages(): FlashMessage<unknown>[] {
+  const [state, setState] = useState<FlashMessage<unknown>[]>(
+    flashMessageService.getFlashMessages()
+  );
 
   useEffect(() => {
-    const subscriber = (nextState: FlashMessage<any>[]) => {
+    const subscriber = (nextState: FlashMessage<unknown>[]) => {
       setState(nextState);
     };
 
