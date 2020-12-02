@@ -8,6 +8,7 @@ import {
   removeFlashMessage,
   resetNextFlashMessageId,
 } from '../src/actions';
+import { FlashMessage } from '../src/models';
 
 import { flashMessageService } from '../src/service';
 
@@ -15,9 +16,11 @@ jest.useFakeTimers();
 
 describe('Flash message actions', () => {
   let onClick: jest.Mock;
+  let onRemove: jest.Mock;
 
   beforeEach(() => {
     onClick = jest.fn();
+    onRemove = jest.fn();
 
     jest.spyOn(flashMessageService, 'addFlashMessage');
     jest.spyOn(flashMessageService, 'removeFlashMessage');
@@ -28,28 +31,39 @@ describe('Flash message actions', () => {
     resetNextFlashMessageId();
   });
 
+  function checkCallbacks({flashMessage, expectedRemoveCount}: { flashMessage: FlashMessage<unknown>, expectedRemoveCount: number}) {
+    expect(typeof flashMessage.onClick).toBe('function');
+      
+    flashMessage.onClick();
+
+    expect(onClick).toBeCalledTimes(1);
+    expect(onClick).toHaveBeenCalledWith(flashMessage);
+
+    expect(typeof flashMessage.onRemove).toBe('function');
+
+    flashMessage.onRemove('duration-elapsed');
+
+    expect(onRemove).toBeCalledTimes(expectedRemoveCount);
+    expect(onRemove).toHaveBeenCalledWith(flashMessage, 'duration-elapsed');
+  }
+
   describe('addFlashMessage', () => {
-    test('that it adds an id and a alters the onClick so that it encloses the FlashMessage', () => {
+    test('that it adds an id and alters the onClick and onRemove so that it encloses the FlashMessage', () => {
       const flashMessage = addFlashMessage({
         type: 'BLAAT',
         text: 'TLAAB',
         onClick,
+        onRemove,
         duration: 5000,
         data: { age: 16 },
       });
 
       expect(flashMessage.id).toBe(1);
-
-      expect(typeof flashMessage.onClick).toBe('function');
       
-      flashMessage.onClick();
-
-      expect(onClick).toBeCalledTimes(1);
-      expect(onClick).toHaveBeenCalledWith(flashMessage);
-
+      checkCallbacks({flashMessage, expectedRemoveCount: 1});
     });
 
-    test('when onClick is not defined it should assign a noop', () => {
+    test('when onClick, and onRemove are not defined it should assign a noop', () => {
       const flashMessage = addFlashMessage({
         type: 'BLAAT',
         text: 'TLAAB',
@@ -59,14 +73,18 @@ describe('Flash message actions', () => {
 
       expect(typeof flashMessage.onClick).toBe('function');
       expect(flashMessage.onClick()).toBe(undefined);
+
+      expect(typeof flashMessage.onRemove).toBe('function');
+      expect(flashMessage.onRemove('manually-removed')).toBe(undefined);
     });
 
     test('custom type should work', () => {
-      addFlashMessage({
+      const flashMessage = addFlashMessage({
         type: 'BLAAT',
         text: 'TLAAB',
         duration: false,
         onClick,
+        onRemove,
         data: { age: 16 },
       });
 
@@ -78,11 +96,13 @@ describe('Flash message actions', () => {
         duration: false,
         data: { age: 16 },
       }));
+
+      checkCallbacks({flashMessage, expectedRemoveCount: 1});
     });
   });
 
   test('removeFlashMessage', () => {
-    const flashMessage = addError({ text: 'Epic error', onClick, data: { age: 12 } });
+    const flashMessage = addError({ text: 'Epic error', onClick, onRemove, data: { age: 12 } });
 
     expect(flashMessageService.addFlashMessage).toHaveBeenCalledTimes(1);
     expect(flashMessageService.addFlashMessage).toHaveBeenCalledWith(expect.objectContaining({
@@ -93,15 +113,16 @@ describe('Flash message actions', () => {
       data: { age: 12 },
     }));
 
+    // Calling removeFlashMessage is a manual removal.
     removeFlashMessage(flashMessage);
 
     expect(flashMessageService.removeFlashMessage).toHaveBeenCalledTimes(1);
-    expect(flashMessageService.removeFlashMessage).toHaveBeenCalledWith(flashMessage);
+    expect(flashMessageService.removeFlashMessage).toHaveBeenCalledWith(flashMessage, 'manually-removed');
   });
 
   describe('default creators', () => {
     test('addError', () => {
-      const flashMessage = addError({ text: 'Epic error', onClick, data: { age: 12 } });
+      const flashMessage = addError({ text: 'Epic error', onClick, onRemove, data: { age: 12 } });
 
       expect(flashMessageService.addFlashMessage).toHaveBeenCalledTimes(1);
       expect(flashMessageService.addFlashMessage).toHaveBeenCalledWith(expect.objectContaining({
@@ -117,11 +138,13 @@ describe('Flash message actions', () => {
 
       jest.advanceTimersByTime(1);
       expect(flashMessageService.removeFlashMessage).toHaveBeenCalledTimes(1);
-      expect(flashMessageService.removeFlashMessage).toHaveBeenCalledWith(flashMessage);
+      expect(flashMessageService.removeFlashMessage).toHaveBeenCalledWith(flashMessage, 'duration-elapsed');
+
+      checkCallbacks({flashMessage, expectedRemoveCount: 2});
     });
 
     test('addWarning', () => {
-      const flashMessage = addWarning({ text: 'Epic warning', onClick, data: { age: 13 } });
+      const flashMessage = addWarning({ text: 'Epic warning', onClick, onRemove, data: { age: 13 } });
 
       expect(flashMessageService.addFlashMessage).toHaveBeenCalledTimes(1);
       expect(flashMessageService.addFlashMessage).toHaveBeenCalledWith(expect.objectContaining({
@@ -137,11 +160,13 @@ describe('Flash message actions', () => {
 
       jest.advanceTimersByTime(1);
       expect(flashMessageService.removeFlashMessage).toHaveBeenCalledTimes(1);
-      expect(flashMessageService.removeFlashMessage).toHaveBeenCalledWith(flashMessage);
+      expect(flashMessageService.removeFlashMessage).toHaveBeenCalledWith(flashMessage, 'duration-elapsed');
+
+      checkCallbacks({flashMessage, expectedRemoveCount: 2});
     });
 
     test('addSuccess', () => {
-      const flashMessage = addSuccess({ text: 'Epic success', onClick, data: { age: 14 } });
+      const flashMessage = addSuccess({ text: 'Epic success', onClick, onRemove, data: { age: 14 } });
 
       expect(flashMessageService.addFlashMessage).toHaveBeenCalledTimes(1);
       expect(flashMessageService.addFlashMessage).toHaveBeenCalledWith(expect.objectContaining({
@@ -157,11 +182,13 @@ describe('Flash message actions', () => {
 
       jest.advanceTimersByTime(1);
       expect(flashMessageService.removeFlashMessage).toHaveBeenCalledTimes(1);
-      expect(flashMessageService.removeFlashMessage).toHaveBeenCalledWith(flashMessage);
+      expect(flashMessageService.removeFlashMessage).toHaveBeenCalledWith(flashMessage, 'duration-elapsed');
+
+      checkCallbacks({flashMessage, expectedRemoveCount: 2});
     });
 
     test('addInfo', () => {
-      const flashMessage = addInfo({ text: 'Epic info', onClick, data: { age: 15 } });
+      const flashMessage = addInfo({ text: 'Epic info', onClick, onRemove, data: { age: 15 } });
 
       expect(flashMessageService.addFlashMessage).toHaveBeenCalledTimes(1);
       expect(flashMessageService.addFlashMessage).toHaveBeenCalledWith(expect.objectContaining({
@@ -178,11 +205,13 @@ describe('Flash message actions', () => {
       jest.advanceTimersByTime(1);
 
       expect(flashMessageService.removeFlashMessage).toHaveBeenCalledTimes(1);
-      expect(flashMessageService.removeFlashMessage).toHaveBeenCalledWith(flashMessage);
+      expect(flashMessageService.removeFlashMessage).toHaveBeenCalledWith(flashMessage, 'duration-elapsed');
+
+      checkCallbacks({flashMessage, expectedRemoveCount: 2});
     });
 
     test('addApocalypse', () => {
-      addApocalypse({ text: 'TOTAL ANNIHILATION', onClick, data: { age: 16 } });
+      const flashMessage = addApocalypse({ text: 'TOTAL ANNIHILATION', onClick, onRemove, data: { age: 16 } });
 
       expect(flashMessageService.addFlashMessage).toHaveBeenCalledTimes(1);
       expect(flashMessageService.addFlashMessage).toHaveBeenCalledWith(expect.objectContaining({
@@ -196,6 +225,8 @@ describe('Flash message actions', () => {
       jest.advanceTimersByTime(600000000);
 
       expect(flashMessageService.removeFlashMessage).toHaveBeenCalledTimes(0);
+
+      checkCallbacks({flashMessage, expectedRemoveCount: 1});
     });
   });
 });

@@ -11,6 +11,13 @@ export type Props = {
   children: React.ReactNode;
 };
 
+/**
+ * Provider which provides the a flash message context. Should only
+ * be used when needing the `FlashMessagesContext`. We recommend
+ * using the `useFlashMessages` hook instead were possible.
+ *
+ * @param children The children to render
+ */
 export function FlashMessagesProvider({ children }: Props): JSX.Element {
   const flashMessages = useFlashMessages();
 

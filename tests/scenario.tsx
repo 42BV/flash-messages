@@ -1,10 +1,15 @@
 import React from 'react';
-import { render, cleanup, waitFor, act, fireEvent } from '@testing-library/react';
+import {
+  render,
+  cleanup,
+  waitFor,
+  act,
+  fireEvent
+} from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import { useFlashMessages } from '../src/hooks';
-import { addInfo } from '../src/actions';
-import { flashMessageService } from '../src/service';
+import { addInfo, removeFlashMessage } from '../src/actions';
 import { FlashMessage } from '../src/models';
 
 afterEach(cleanup);
@@ -15,26 +20,37 @@ describe('Scenario', () => {
 
     return (
       <ul>
-        {flashMessages.map(({id, text, onClick}) => (
-          <li data-testid="message" key={id} onClick={onClick}>
-            {text}
-          </li>
-        ))}
+        {flashMessages.map(flashMessage => {
+          const { id, text, onClick } = flashMessage;
+
+          return (
+            <li data-testid="message" key={id} onClick={onClick}>
+              {text}
+            </li>
+          );
+        })}
       </ul>
     );
   }
 
   test('a basic complete scenario which shows flash messages which remove when clicked', async () => {
-    expect.assertions(2);
-    
+    expect.assertions(7);
+
     const { getByTestId, queryByTestId } = render(<Component />);
 
     const onClick = (flashMessage: FlashMessage<unknown>) => {
-      flashMessageService.removeFlashMessage(flashMessage);
+      expect(flashMessage.id).toBeDefined();
+      expect(flashMessage.text).toBe('info');
+      removeFlashMessage(flashMessage);
     };
 
     act(() => {
-      addInfo({ text: 'info', onClick });
+      addInfo({ text: 'info', onClick, onRemove: (flashMessage, reason) => {
+        expect(flashMessage.id).toBeDefined();
+        expect(flashMessage.text).toBe('info');
+
+        expect(reason).toBe('manually-removed')
+      } });
     });
 
     await waitFor(() => {

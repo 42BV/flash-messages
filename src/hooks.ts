@@ -4,7 +4,8 @@ import { flashMessageService } from './service';
 import { FlashMessage } from './models';
 
 /**
- * Returns the flashMessages.
+ * Provides the active flash messages which are currently in the
+ * flash message store.
  */
 export function useFlashMessages(): FlashMessage<unknown>[] {
   const [state, setState] = useState<FlashMessage<unknown>[]>(

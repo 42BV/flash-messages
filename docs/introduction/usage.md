@@ -143,34 +143,62 @@ Now that we can see the flash messages we can use the following convenience meth
 import { addError, addWarning, addSuccess, addInfo, addApocalypse } from '@42.nl/react-flash-messages';
 
 // Renders a message for 10000 milliseconds
-addError({ text: 'Epic error', data: { age: 12 }, onClick: (flashMessage) => {
-  console.log('I was clicked');
-  console.log(flashMessage);
-}});
+addError({ 
+  text: 'Epic error', 
+  data: { age: 12 }, 
+  onClick: (flashMessage) => {
+    console.log('I was clicked', flashmessage);
+  },
+  onRemove(flashMessage, reason) => {
+    console.log('I was removed', flashMessage, 'because', reason);
+  })
+});
 
 // Renders a message for 7000 milliseconds
-addWarning({ text: 'Epic warning', data: { tree: 'house' }, onClick: (flashMessage) => {
-  console.log('I was clicked');
-  console.log(flashMessage);
-}});
+addWarning({ 
+  text: 'Epic warning', 
+  data: { tree: 'house' }, 
+  onClick: (flashMessage) => {
+    console.log('I was clicked', flashMessage);
+  },
+  onRemove(flashMessage, reason) => {
+    console.log('I was removed', flashMessage, 'because', reason);
+  })
+});
 
 // Renders a message for 2000 milliseconds
-addSuccess({ text: 'Epic success', data: { win: true }, onClick: (flashMessage) => {
-  console.log('I was clicked');
-  console.log(flashMessage);
-}});
+addSuccess({ 
+  text: 'Epic success', 
+  data: { win: true }, 
+  onClick: (flashMessage) => {
+    console.log('I was clicked', flashMessage);
+  },
+  onRemove(flashMessage, reason) => {
+    console.log('I was removed', flashMessage, 'because', reason);
+  })
+});
 
 // Renders a message for 5000 milliseconds
-addInfo({ text: 'Epic info', data: { yo: 'man' }, onClick: (flashMessage) => {
-  console.log('I was clicked');
-  console.log(flashMessage);
-}});
+addInfo({ 
+  text: 'Epic info', 
+  data: { yo: 'man' }, 
+  onClick: (flashMessage) => {
+    console.log('I was clicked', flashMessage);
+  },onRemove(flashMessage, reason) => {
+    console.log('I was removed', flashMessage, 'because', reason);
+  })
+});
 
 // Renders a message which is not automatically removed
-addApocalypse({ text: 'TOTAL ANNIHILATION', data: { fail: true }, onClick: (flashMessage) => {
-  console.log('I was clicked');
-  console.log(flashMessage);
-}});
+addApocalypse({ 
+  text: 'TOTAL ANNIHILATION', 
+  data: { fail: true }, 
+  onClick: (flashMessage) => {
+    console.log('I was clicked', flashMessage);
+  },onRemove(flashMessage, reason) => {
+    console.log('I was removed', flashMessage, 'because', reason);
+  })
+});
 ```
 
 The `onClick` and the `data` keys are optional. The `data`
@@ -186,7 +214,7 @@ You do this by calling `addFlashMessage` manually.
 ```js
 import { addFlashMessage } from '@42.nl/react-flash-messages';
 
-export function addNotice({ text, onClick, data }: FlashMessageCreatorConfig<Data>): FlashMessage<Data> {
-  return addFlashMessage(type: 'NOTICE', duration: 1000, text, onClick, data});
+export function addNotice(config: FlashMessageCreatorConfig<Data>): FlashMessage<Data> {
+  return addFlashMessage(type: 'NOTICE', duration: 1000, ...config});
 }
 ```

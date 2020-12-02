@@ -3,14 +3,16 @@ import { makeFlashMessageService, FlashMessageService } from '../src/service';
 describe('AuthenticationService', () => {
   let flashMessageService: FlashMessageService;
   let onClick: jest.Mock;
+  let onRemove: jest.Mock;
 
   beforeEach(() => {
     onClick = jest.fn();
+    onRemove = jest.fn();
     flashMessageService = makeFlashMessageService();
   });
 
   test('addFlashMessage should add flash message and inform subscribers', () => {
-    const flashMessage = { id: 1, type: 'info', text: 'Hello', duration: 5000, onClick };
+    const flashMessage = { id: 1, type: 'info', text: 'Hello', duration: 5000, onClick, onRemove };
 
     const subscriber = jest.fn();
 
@@ -26,7 +28,7 @@ describe('AuthenticationService', () => {
   });
 
   test('removeFlashMessage should remove the flash message and inform subscribers', () => {
-    const flashMessage = { id: 1, type: 'info', text: 'Hello', duration: 5000, onClick };
+    const flashMessage = { id: 1, type: 'info', text: 'Hello', duration: 5000, onClick, onRemove };
 
     const subscriber = jest.fn();
 
@@ -36,7 +38,7 @@ describe('AuthenticationService', () => {
     flashMessageService.addFlashMessage(flashMessage);
     expect(subscriber).toBeCalledTimes(2);
 
-    flashMessageService.removeFlashMessage(flashMessage);
+    flashMessageService.removeFlashMessage(flashMessage, 'duration-elapsed');
 
     expect(subscriber).toBeCalledTimes(3);
     expect(subscriber).toHaveBeenLastCalledWith([]);
@@ -45,8 +47,8 @@ describe('AuthenticationService', () => {
   });
 
   test('clearFlashMessages should clear all the flash messages and inform subscribers', () => {
-    const flashMessageOne = { id: 1, type: 'info', text: 'Hello', duration: 5000, onClick };
-    const flashMessageTwo = { id: 2, type: 'warning', text: 'Goodbye', duration: 2000, onClick };
+    const flashMessageOne = { id: 1, type: 'info', text: 'Hello', duration: 5000, onClick, onRemove };
+    const flashMessageTwo = { id: 2, type: 'warning', text: 'Goodbye', duration: 2000, onClick, onRemove };
 
     const subscriber = jest.fn();
 

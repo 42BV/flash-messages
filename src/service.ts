@@ -1,10 +1,13 @@
-import { FlashMessage } from './models';
+import { FlashMessage, FlashMessageRemovedReason } from './models';
 
 export type Subscriber = (flashMessages: FlashMessage<unknown>[]) => void;
 
 export type FlashMessageService = {
   addFlashMessage(flashMessage: FlashMessage<unknown>): void;
-  removeFlashMessage(flashMessage: FlashMessage<unknown>): void;
+  removeFlashMessage(
+    flashMessage: FlashMessage<unknown>,
+    reason: FlashMessageRemovedReason
+  ): void;
   clearFlashMessages(): void;
   subscribe(subscriber: Subscriber): void;
   unsubscribe(subscriber: Subscriber): void;
@@ -31,8 +34,21 @@ export function makeFlashMessageService(): FlashMessageService {
     informSubscribers();
   }
 
-  function removeFlashMessage(flashMessage: FlashMessage<unknown>) {
-    flashMessages = flashMessages.filter((f) => f !== flashMessage);
+  function removeFlashMessage(
+    flashMessage: FlashMessage<unknown>,
+    reason: FlashMessageRemovedReason
+  ) {
+    const remainingFlashMessages: FlashMessage<unknown>[] = [];
+
+    flashMessages.forEach((f) => {
+      if (f !== flashMessage) {
+        remainingFlashMessages.push(f);
+      } else {
+        f.onRemove(reason);
+      }
+    });
+
+    flashMessages = remainingFlashMessages;
 
     informSubscribers();
   }
