@@ -3,23 +3,23 @@ import * as index from '../src';
 describe('index', () => {
   test('exports', () => {
     expect(index).toMatchInlineSnapshot(`
-      Object {
-        "FlashMessagesContext": Object {
+      {
+        "FlashMessagesContext": {
           "$$typeof": Symbol(react.context),
-          "Consumer": Object {
+          "Consumer": {
             "$$typeof": Symbol(react.context),
-            "_calculateChangedBits": null,
             "_context": [Circular],
           },
-          "Provider": Object {
+          "Provider": {
             "$$typeof": Symbol(react.provider),
             "_context": [Circular],
           },
-          "_calculateChangedBits": null,
           "_currentRenderer": null,
           "_currentRenderer2": null,
-          "_currentValue": Array [],
-          "_currentValue2": Array [],
+          "_currentValue": [],
+          "_currentValue2": [],
+          "_defaultValue": null,
+          "_globalName": null,
           "_threadCount": 0,
         },
         "FlashMessagesProvider": [Function],
@@ -29,7 +29,7 @@ describe('index', () => {
         "addInfo": [Function],
         "addSuccess": [Function],
         "addWarning": [Function],
-        "flashMessageService": Object {
+        "flashMessageService": {
           "addFlashMessage": [Function],
           "clearFlashMessages": [Function],
           "getFlashMessages": [Function],
